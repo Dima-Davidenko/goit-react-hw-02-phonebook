@@ -1,4 +1,3 @@
-// import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { Section, Filter, Contacts, NewContactForm } from './';
 import styled from '@emotion/styled';

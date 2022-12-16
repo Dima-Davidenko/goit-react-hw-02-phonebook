@@ -1,7 +1,10 @@
 // import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { Section, FeedbackOptions, Statistics } from './';
+import { Section, Filter, Contacts, NewContactForm } from './';
 import styled from '@emotion/styled';
+import { Typography } from '@mui/material';
+import phonebook from '../data/phonebook.json';
+import { nanoid } from 'nanoid';
 
 const Container = styled.div`
   margin: 0 auto;
@@ -10,52 +13,51 @@ const Container = styled.div`
 
 export class App extends Component {
   state = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
-    total: 0,
-    positivePercentage: 0,
+    contacts: [...phonebook],
+    filteredContacts: [],
+    filter: '',
   };
 
-  getOptions = () => {
-    return ['good', 'neutral', 'bad'];
+  addContact = ({ name, number }) => {
+    const newContact = {
+      name,
+      number,
+      id: nanoid(),
+    };
+    this.setState(prevState => ({ contacts: [...prevState.contacts, newContact] }));
   };
 
-  handleFeedbackBtnClick = ({ target }) => {
-    const { name } = target;
-    const newState = { ...this.state };
-    newState[name] += 1;
-    newState.total = this.countTotal(newState);
-    newState.positivePercentage = this.countPositivePercentage(newState);
-    this.setState(newState);
+  filterContacts = filter => {
+    const { contacts } = this.state;
+    this.setState({
+      filteredContacts: contacts.filter(({ name }) => name.toLowerCase().includes(filter)),
+      filter,
+    });
   };
 
-  countTotal = ({ good, bad, neutral }) => {
-    return good + bad + neutral;
+  removeContact = idToRemove => {
+    this.setState(({ contacts, filteredContacts }) => ({
+      contacts: contacts.filter(({ id }) => id !== idToRemove),
+      filteredContacts: filteredContacts.filter(({ id }) => id !== idToRemove),
+    }));
   };
-
-  countPositivePercentage = ({ good, total }) => {
-    return +((good / total) * 100).toFixed(0);
-  };
-
   render() {
-    const { good, neutral, bad, total, positivePercentage } = this.state;
+    const { contacts, filteredContacts, filter } = this.state;
     return (
       <Container>
-        <Section title="Please leave your feedback">
-          <FeedbackOptions
-            options={this.getOptions()}
-            onLeaveFeedback={this.handleFeedbackBtnClick}
-          />
+        <Typography variant="h2" sx={{ mb: 10 }}>
+          Телефонна книжка
+        </Typography>
+        <Section title="Додати новий контакт" variant="h3">
+          <NewContactForm addContact={this.addContact} />
         </Section>
-        <Section title="Statistics">
-          <Statistics
-            good={good}
-            neutral={neutral}
-            bad={bad}
-            total={total}
-            positivePercentage={positivePercentage}
-          />
+        <Section title="Ваші контакти" variant="h3">
+          <Contacts
+            contactsToShow={filteredContacts.length || filter ? filteredContacts : contacts}
+            removeContact={this.removeContact}
+          >
+            <Filter filterContacts={this.filterContacts} />
+          </Contacts>
         </Section>
       </Container>
     );

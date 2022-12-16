@@ -1,4 +1,4 @@
-import { Button, Paper, Typography } from '@mui/material';
+import { Paper, Typography } from '@mui/material';
 import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 import React from 'react';

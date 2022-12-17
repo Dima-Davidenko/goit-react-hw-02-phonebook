@@ -4,7 +4,7 @@ import { TextField } from '@mui/material';
 
 export class Filter extends Component {
   static propTypes = {
-    filterContacts: PropTypes.func.isRequired,
+    setFilter: PropTypes.func.isRequired,
   };
   state = {
     value: '',
@@ -12,7 +12,7 @@ export class Filter extends Component {
 
   handleInputChange = ({ target }) => {
     this.setState({ value: target.value });
-    this.props.filterContacts(target.value.toLowerCase());
+    this.props.setFilter(target.value.toLowerCase());
   };
 
   render() {
